@@ -23,6 +23,7 @@ main {
   gap: 1rem;
   border-radius: 0.25rem;
   padding: 2rem;
+  width: 500px;
   background: var(--dark-bg);
 }
 
@@ -40,6 +41,7 @@ main {
   border-radius: 0.25rem;
   width: 100%;
   cursor: pointer;
+  letter-spacing: 1px;
 }
 
 .suggestionBtn:hover {
@@ -49,4 +51,23 @@ main {
 #inputText {
   padding: 0.5rem;
   border-radius: 0.25rem;
+  width: 100%;
+  font-size: 14px;
+}
+
+.clearBtn {
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 18px;
+  display: flex;
+  margin: 0 auto;
+  cursor: pointer;
+  font-family: "Silkscreen", cursive;
+}
+
+.clearBtn:hover {
+  background: darkred;
 }

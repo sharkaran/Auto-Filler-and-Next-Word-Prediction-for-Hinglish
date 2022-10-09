@@ -14,6 +14,10 @@ const Input = () => {
     setText(e.target.value);
   };
 
+  const handleClick = () => {
+    setText("");
+  };
+
   useEffect(() => {
     let sentence = text.split(".").slice(-1);
     console.log(sentence);
@@ -22,7 +26,7 @@ const Input = () => {
   return (
     <main>
       <div className="input">
-        <h3>Suggestions:</h3>
+        <h2>Suggestions:</h2>
         <div className="suggestionWrapper">
           {suggestions.map((word, key) => {
             return (
@@ -33,7 +37,7 @@ const Input = () => {
           })}
         </div>
         <label htmlFor="inputText">
-          <h3>Enter Hinglish Text:</h3>
+          <h2>Enter Hinglish Text:</h2>
         </label>
         {/* <p>{text}</p> */}
         <textarea
@@ -45,6 +49,9 @@ const Input = () => {
           value={text}
           onChange={handleChange}
         />
+        <button className="clearBtn" onClick={handleClick}>
+          CLEAR
+        </button>
       </div>
     </main>
   );
