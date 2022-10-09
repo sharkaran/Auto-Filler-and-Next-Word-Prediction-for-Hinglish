@@ -1,6 +1,5 @@
 big_data.txt
 pyvenv.cfg
-Flask app/json
 Flask app/venv
 venv
 Flask app/__pycache__
