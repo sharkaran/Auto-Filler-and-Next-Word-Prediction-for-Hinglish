@@ -1,0 +1,52 @@
+nav,
+footer {
+  background: var(--nav-bg);
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  font-family: "Silkscreen", cursive;
+}
+
+main {
+  min-height: calc(100vh - 136px);
+  background: var(--light-bg);
+  color: white;
+  display: grid;
+  place-items: center;
+}
+
+.input {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 1rem;
+  border-radius: 0.25rem;
+  padding: 2rem;
+  background: var(--dark-bg);
+}
+
+.suggestionWrapper {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+
+.suggestionBtn {
+  padding: 0.5rem 0.25rem;
+  background: var(--secondary);
+  border: none;
+  border-radius: 0.25rem;
+  width: 100%;
+  cursor: pointer;
+}
+
+.suggestionBtn:hover {
+  background: var(--primary);
+}
+
+#inputText {
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+}
