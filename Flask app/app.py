@@ -3,6 +3,7 @@ import json
 from flask_cors import CORS
 import nltk
 from collections import defaultdict
+from jaro import jaro_winkler_metric
 
 app = Flask(__name__)
 CORS(app)
@@ -17,9 +18,9 @@ quad_count = open("json/bigram_counts.json", 'r')
 # trigram_counts = json.load(tri_count)
 # quadgram_counts = json.load(quad_count)
 
-bigram_counts = defaultdict(int,json.load(bi_count))
-trigram_counts = defaultdict(int,json.load(tri_count))
-quadgram_counts = defaultdict(int,json.load(quad_count))
+bigram_counts = defaultdict(int, json.load(bi_count))
+trigram_counts = defaultdict(int, json.load(tri_count))
+quadgram_counts = defaultdict(int, json.load(quad_count))
 
 bi_p = open("json/bigram_prob.json", 'r')
 tri_p = open("json/trigram_prob.json", 'r')
@@ -29,23 +30,26 @@ quad_p = open("json/quadgram_prob.json", 'r')
 # trigram_prob = json.load(tri_p)
 # quadgram_prob = json.load(quad_p)
 
-bigram_prob = defaultdict(int,json.load(bi_p))
-trigram_prob = defaultdict(int,json.load(tri_p))
-quadgram_prob = defaultdict(int,json.load(quad_p))
+bigram_prob = defaultdict(int, json.load(bi_p))
+trigram_prob = defaultdict(int, json.load(tri_p))
+quadgram_prob = defaultdict(int, json.load(quad_p))
 
 v = open("json/vocab.json", 'r')
 # vocab = json.load(v)
-vocab = defaultdict(int,json.load(v))
+vocab = defaultdict(int, json.load(v))
 
 # print(bigram_counts)
+
 
 @app.route('/')
 def home():
     return "Hello World!"
 
-@app.route('/suggest',methods=['GET'])
+
+@app.route('/suggest', methods=['GET'])
 def doPredictions():
     sentence = request.args.get("sentence")
+    print(sentence)
     end_word = None
     incomplete = False
 
@@ -62,21 +66,24 @@ def doPredictions():
 
     if incomplete:
         choices = set(choices.union(vocab.keys()))
-        choices = get_close_matches(end_word, choices, n=30)
 
     for word in choices:
+        if incomplete:
+            similarity = jaro_winkler_metric(end_word, word)
+            if similarity < 0.6:
+                continue
         key = sentence + word
         quad_token = " ".join(key.split()[-4:])
 
         prob = (
-            (quadgram_counts[quad_token] + 1)/ (trigram_counts[" ".join(quad_token.split()[-3:])] + V) + 
-            (trigram_counts[" ".join(quad_token.split()[-3:])] + 1)/ (bigram_counts[" ".join(quad_token.split()[-2:])] + V) +
-            (bigram_counts[" ".join(quad_token.split()[-2:])] + 1)/ (vocab[word] + V) + 
-            (vocab[word] + 1)/ (num_words + V)
+            (quadgram_counts[quad_token] + 1) / (trigram_counts[" ".join(quad_token.split()[-3:])] + V) +
+            (trigram_counts[" ".join(quad_token.split()[-3:])] + 1) / (bigram_counts[" ".join(quad_token.split()[-2:])] + V) +
+            (bigram_counts[" ".join(quad_token.split()[-2:])] + 1) / (vocab[word] + V) +
+            (vocab[word] + 1) / (num_words + V)
         )
 
         if incomplete:
-            similarity = SequenceMatcher(None, end_word, word).ratio()
+            similarity = jaro_winkler_metric(end_word, word)
             predictions.append([similarity, prob, word])
         else:
             predictions.append([prob, word])
@@ -84,7 +91,9 @@ def doPredictions():
     predictions = sorted(predictions, reverse=True)
     # print(predictions)
     best_preds = [pred[-1] for pred in predictions[:4]]
+    print(best_preds)
     return best_preds
+
 
 def getWordChoices(sentence):
     choices = []
